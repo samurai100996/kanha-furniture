@@ -16,8 +16,39 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
-<!-- Navigation -->
-            <nav class="bg-white shadow-lg">
+<!-- Top Utility Bar -->
+            <div class="bg-gray-800 text-white text-sm">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="flex justify-between items-center py-2">
+                        <div class="flex space-x-4">
+                            <a href="#" class="hover:text-gray-300 transition-colors">
+                                📞 Customer Care: 1800-123-4567
+                            </a>
+                            <a href="#" class="hover:text-gray-300 transition-colors">
+                                📍 Store Locator
+                            </a>
+                        </div>
+                        <div class="flex space-x-4">
+                            <a href="#" class="hover:text-gray-300 transition-colors">
+                                🏪 Franchise Enquiry
+                            </a>
+                            <a href="#" class="hover:text-gray-300 transition-colors">
+                                🛡️ Warranty Registration
+                            </a>
+                            <a href="#" class="hover:text-gray-300 transition-colors">
+                                📦 Track Your Order
+                            </a>
+                            <a href="#" class="hover:text-gray-300 transition-colors">
+                                💬 Live Chat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Navigation -->
+            <nav class="bg-white shadow-lg relative">
+                
                 <div class="max-w-7xl mx-auto px-4">
                     <div class="flex justify-between h-16">
                         <div class="flex">
@@ -36,15 +67,32 @@
                                 <a href="{{ route('products.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('products.*') ? 'border-indigo-400 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700' }} text-sm font-medium">
                                     Products
                                 </a>
-                                <a href="{{ route('cart.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('cart.*') ? 'border-indigo-400 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700' }} text-sm font-medium">
-                                    Cart
-                                    @php
-                                        $cartCount = session()->get('cart') ? array_sum(array_column(session()->get('cart'), 'quantity')) : 0;
-                                    @endphp
-                                    @if($cartCount > 0)
-                                        <span class="ml-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
-                                    @endif
-                                </a>
+                                <!-- Categories Dropdown -->
+                                <div class="relative group" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                                    <button class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm font-medium h-16">
+                                        Categories
+                                        <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <div x-show="open" 
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 scale-95"
+                                         x-transition:enter-end="opacity-1 scale-100"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-1 scale-100"
+                                         x-transition:leave-end="opacity-0 scale-95"
+                                         class="absolute top-full left-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50 mt-1">
+                                        @php
+                                            $navCategories = \App\Models\Category::all();
+                                        @endphp
+                                        @foreach($navCategories as $category)
+                                        <a href="{{ route('products.index', ['category' => $category->name]) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                            {{ $category->icon }} {{ $category->name }}
+                                        </a>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -101,32 +149,93 @@
 
                         <!-- Right Side -->
                         <div class="flex items-center space-x-4">
-                            @auth
-                                <!-- Settings Dropdown -->
-                                <div class="relative">
-                                    <button id="user-menu" class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        <span class="sr-only">Open user menu</span>
-                                        <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
-                                            {{ substr(auth()->user()->name, 0, 1) }}
-                                        </div>
-                                    </button>
+                            <!-- Wishlist Icon -->
+                            <a href="#" class="relative p-2 text-gray-500 hover:text-gray-700 transition-colors group">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center group-hover:bg-red-600">3</span>
+                                <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                    Wishlist
                                 </div>
-
-                                <!-- Admin Link for authenticated users -->
-                                <a href="{{ route('admin.dashboard') }}" class="text-gray-500 hover:text-gray-700 text-sm font-medium">
-                                    Admin
-                                </a>
-
-                                <!-- Logout -->
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="text-gray-500 hover:text-gray-700 text-sm font-medium">
-                                        Logout
+                            </a>
+                            
+                            <!-- Cart Icon -->
+                            <a href="{{ route('cart.index') }}" class="relative p-2 text-gray-500 hover:text-gray-700 transition-colors group">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5M17 21a2 2 0 100-4 2 2 0 000 4zm-8 0a2 2 0 100-4 2 2 0 000 4z"></path>
+                                </svg>
+                                @php
+                                    $cartCount = session()->get('cart') ? array_sum(array_column(session()->get('cart'), 'quantity')) : 0;
+                                @endphp
+                                @if($cartCount > 0)
+                                    <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center group-hover:bg-blue-600">{{ $cartCount }}</span>
+                                @endif
+                                <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                    Cart ({{ $cartCount }})
+                                </div>
+                            </a>
+                            
+                            @auth
+                                <!-- User Account Dropdown -->
+                                <div class="relative" x-data="{ open: false }">
+                                    <button @click="open = !open" class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-1">
+                                        <span class="sr-only">Open user menu</span>
+                                        <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
+                                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                        </div>
+                                        <svg class="ml-1 h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
                                     </button>
-                                </form>
+                                    
+                                    <div x-show="open" 
+                                         @click.away="open = false"
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 scale-95"
+                                         x-transition:enter-end="opacity-1 scale-100"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-1 scale-100"
+                                         x-transition:leave-end="opacity-0 scale-95"
+                                         class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                                        <div class="py-1">
+                                            <div class="px-4 py-2 text-sm text-gray-700 border-b">
+                                                <div class="font-medium">{{ auth()->user()->name }}</div>
+                                                <div class="text-xs text-gray-500">{{ auth()->user()->email }}</div>
+                                            </div>
+                                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                🏠 Dashboard
+                                            </a>
+                                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                📦 My Orders
+                                            </a>
+                                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                ⚙️ Settings
+                                            </a>
+                                            <div class="border-t">
+                                                <form method="POST" action="{{ route('logout') }}">
+                                                    @csrf
+                                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                                        🚪 Logout
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             @else
-                                <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-700 text-sm font-medium">Login</a>
-                                <a href="{{ route('register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Register</a>
+                                <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-700 text-sm font-medium flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    Login
+                                </a>
+                                <a href="{{ route('register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                    </svg>
+                                    Register
+                                </a>
                             @endauth
                         </div>
                     </div>
