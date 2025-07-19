@@ -50,7 +50,7 @@ A modern, full-featured e-commerce platform built with **Laravel 10**, **Tailwin
 ### **Quick Start**
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/kanha-furniture.git
+git clone https://github.com/samurai100996/kanha-furniture.git
 cd kanha-furniture
 
 # Install PHP dependencies
@@ -196,9 +196,10 @@ kanha-furniture/
 
 ## 👨‍💻 **Developer**
 
-**Saurabh Shelke**
-- GitHub: [@saurabhshelke](https://github.com/saurabhshelke)
-- Email: saurabh.shelke@example.com
+**Saurav Shelke**
+- GitHub: [@samurai100996](https://github.com/samurai100996)
+- Email: sauravshelke2003@gmail.com
+- Portfolio: [GitHub Profile](https://github.com/samurai100996)
 
 ## 📄 **License**
 
